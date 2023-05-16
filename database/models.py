@@ -74,14 +74,14 @@ class Customer(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(200))
     last_name = db.Column(db.String(200))
-    customer_booking_ref = db.Column(db.String(200), db.ForeignKey("booking.booking_ref"))
-    customer_booking = db.relationship("Booking", foreign_keys=[customer_booking_ref])
+    booking_ref = db.Column(db.String(200), db.ForeignKey("booking.booking_ref"))
+    booking = db.relationship("Booking", foreign_keys=[booking_ref])
 
-    def __init__(self, first_name, last_name, customer_booking_ref, customer_booking):
+    def __init__(self, first_name, last_name, booking_ref, booking):
         self.first_name = first_name
         self.last_name = last_name
-        self.customer_booking_ref = customer_booking_ref
-        self.customer_booking = customer_booking
+        self.booking_ref = booking_ref
+        self.booking = booking
 
     def __repr__(self):
         return f"Customer('{self.first_name}', '{self.last_name}', '{self.customer_booking_ref}')"

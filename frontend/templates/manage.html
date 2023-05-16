@@ -1,12 +1,27 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Home
+    Login
 {% endblock %}
 
 {% block content %}
-<h1>Home Page</h1>
-<p>Welcome to the home page!</p>
-<p>Register to use our note-making app.</p>
-<p>Login to access all your notes.</p>
+    <div class="container">
+    <h1>Manage My Booking</h1>
+    <p>View or make changes to your flight. You may incur a fee to cancel or change your flight, subject to the conditions of your ticket.</p>
+    <form action="" method="post">
+        <div class="form-group">
+            <!-- the name attribute is really important -->
+            <label for="booking_ref" class="form-label">Booking reference</label>
+            <input type="password" class="form-control" id="booking_ref" name="booking_ref" placeholder="Please enter your booking reference (e.g. MNR64T)" required="required">
+        </div>
+        <div class="form-group">
+            <!-- the name attribute is really important -->
+            <label for="last_name" class="form-label">Your last name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Please enter your last name (e.g. Bond)" required="required">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-success">Find My Booking</button>
+    </form>
+    </div>
+
 {% endblock %}
