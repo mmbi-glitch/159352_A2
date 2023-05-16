@@ -14,13 +14,13 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
             integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
             crossorigin="anonymous"></script>
-    <script defer type="text/javascript" src="{{ url_for("static", filename="index.js") }}"></script>
+{#    <script defer type="text/javascript" src="{{ url_for("static", filename="index.js") }}"></script>#}
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-light bg-light" style="background-color: #023020;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">MilkRun Airways</a>
+        <a class="navbar-brand" href="/">MilkRun Airways</a>
         <!-- NOTE: now data attributes now namespaced with bs, e.g. data-toggle now data-bs-toggle -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
             <span class="navbar-toggler-icon"></span>
@@ -28,9 +28,9 @@
         <div class="collapse navbar-collapse" id="navbar">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" id="flights" href="/flights"><button class="btn btn-outline-success my-2 my-sm-0">Flights</button></a>
-                <a class="nav-item nav-link" id="register" href="/about-us"><button class="btn btn-outline-success my-2 my-sm-0">About Us</button></a>
-                <a class="nav-item nav-link" id="login" href="/login"><button class="btn btn-outline-success my-2 my-sm-0">Login</button></a>
-                <a class="nav-item nav-link" id="register" href="/register"><button class="btn btn-outline-success my-2 my-sm-0">Register</button></a>
+                <a class="nav-item nav-link" id="about_us" href="/about_us"><button class="btn btn-outline-success my-2 my-sm-0">About Us</button></a>
+                <a class="nav-item nav-link" id="manage" href="/manage"><button class="btn btn-outline-success my-2 my-sm-0">Manage Booking</button></a>
+                <a class="nav-item nav-link" id="help" href="/help"><button class="btn btn-outline-success my-2 my-sm-0">Help</button></a>
             </div>
         </div>
     </div>
