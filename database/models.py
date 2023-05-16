@@ -84,14 +84,16 @@ def get_dates_of_certain_day(start_date : pdl.datetime, certain_day : pdl.consta
     dates = list()
     date_object = start_date
 
-    date_object = date_object.next(certain_day)
+    if date_object.weekday() != (certain_day - 1) % 7:
+        date_object = date_object.next(certain_day)
 
     while date_object.year == start_date.year:
         dates.append(date_object)
-        # print(dates[-1])
         date_object = date_object.add(days=7)
 
     return dates
+
+# ------------ outbound flights ------------------ #
 
 outbound_flights = list()
 
@@ -113,8 +115,11 @@ for day in [pdl.MONDAY, pdl.TUESDAY, pdl.WEDNESDAY, pdl.THURSDAY, pdl.FRIDAY]:
 
 for date in outbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=7, minute=45, tz="Pacific/Auckland")
+    outbound_dt_2 = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=17, minute=15, tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(minutes=45))
     outbound_flights.append(Flight(4, "NZNE", "NZRO", outbound_dt, inbound_dt, "", "Cirrus SF50"))
+    inbound_dt = (outbound_dt_2.add(minutes=45))
+    outbound_flights.append(Flight(4, "NZNE", "NZRO", outbound_dt_2, inbound_dt, "", "Cirrus SF50"))
 
 # 3rd service - 2nd cirrus plane
 
@@ -132,7 +137,7 @@ for date in outbound_dates:
 
 outbound_dates.clear()
 
-for day in [pdl.MONDAY, pdl.TUESDAY, pdl.FRIDAY]:
+for day in [pdl.TUESDAY, pdl.FRIDAY]:
     outbound_dates.extend(get_dates_of_certain_day(pdl.today("Pacific/Auckland"), day))
 
 for date in outbound_dates:
@@ -151,4 +156,76 @@ for date in outbound_dates:
     inbound_dt = (outbound_dt.add(hours=3, minutes=10))
     outbound_flights.append(Flight(5, "NZNE", "NZTL", outbound_dt, inbound_dt, "", "HondaJet Elite"))
 
+print("outbound:",len(outbound_flights))
+
+outbound_dates.clear()
+
+# --------------- inbound flights ----------------------- #
+
+inbound_flights = list()
+
+# 1st Service - syberjet plane
+inbound_dates = get_dates_of_certain_day(pdl.today("Australia/Hobart"), pdl.SUNDAY)
+
+for date in inbound_dates:
+    # print(date)
+    outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=14, minute=15, tz="Australia/Hobart")
+    inbound_dt = (outbound_dt.add(hours=3, minutes=50)).in_tz("Pacific/Auckland")
+    inbound_flights.append(Flight(5, "YMHB", "NZNE", outbound_dt, inbound_dt, "", "SyberJet SJ30i"))
+
+# 2nd service - 1st cirrus plane
+
+inbound_dates.clear()
+
+for day in [pdl.MONDAY, pdl.TUESDAY, pdl.WEDNESDAY, pdl.THURSDAY, pdl.FRIDAY]:
+    inbound_dates.extend(get_dates_of_certain_day(pdl.today("Pacific/Auckland"), day))
+
+for date in inbound_dates:
+    outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=12, tz="Pacific/Auckland")
+    outbound_dt_2 = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=20, minute=15, tz="Pacific/Auckland")
+    inbound_dt = (outbound_dt.add(minutes=45))
+    inbound_flights.append(Flight(4, "NZRO", "NZNE", outbound_dt, inbound_dt, "", "Cirrus SF50"))
+    inbound_dt = (outbound_dt_2.add(minutes=45))
+    inbound_flights.append(Flight(4, "NZRO", "NZNE", outbound_dt_2, inbound_dt, "", "Cirrus SF50"))
+
+# 3rd service - 2nd cirrus plane
+
+inbound_dates.clear()
+
+for day in [pdl.TUESDAY, pdl.THURSDAY, pdl.SATURDAY]:
+    inbound_dates.extend(get_dates_of_certain_day(pdl.today("Pacific/Auckland"), day))
+
+for date in inbound_dates:
+    outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=10, minute=45, tz="Pacific/Auckland")
+    inbound_dt = (outbound_dt.add(minutes=20))
+    inbound_flights.append(Flight(4, "NZGB", "NZNE", outbound_dt, inbound_dt, "", "Cirrus SF50"))
+
+# 4th service - 1st honda jet
+
+inbound_dates.clear()
+
+for day in [pdl.WEDNESDAY, pdl.SATURDAY]:
+    inbound_dates.extend(get_dates_of_certain_day(pdl.today("Pacific/Auckland"), day))
+
+for date in inbound_dates:
+    outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=10, minute=15, tz="Pacific/Auckland")
+    inbound_dt = (outbound_dt.add(hours=2, minutes=15))
+    inbound_flights.append(Flight(5, "NZCI", "NZNE", outbound_dt, inbound_dt, "", "HondaJet Elite"))
+
+# 5th service - 2nd honda jet
+
+inbound_dates.clear()
+
+inbound_dates = get_dates_of_certain_day(pdl.today("Pacific/Auckland"), pdl.TUESDAY)
+
+for date in outbound_dates:
+    outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=17, minute=25, tz="Pacific/Auckland")
+    inbound_dt = (outbound_dt.add(hours=3, minutes=10))
+    inbound_flights.append(Flight(5, "NZTL", "NZNE", outbound_dt, inbound_dt, "", "HondaJet Elite"))
+
+print("inbound:",len(inbound_flights))
+
+inbound_dates.clear()
+flights = outbound_flights + inbound_flights
+print("both:", len(flights))
 

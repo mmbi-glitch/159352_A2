@@ -1,8 +1,10 @@
-from flask import Flask
 from os import path
+
+from flask import Flask
+
 from backend.views import views
 from database import db, DB_NAME
-from database.models import Customer, Flight, outbound_flights
+from database.models import Flight, flights
 
 app = Flask(__name__, template_folder="frontend/templates")
 # secret key
@@ -20,13 +22,13 @@ with app.app_context():
 
     if not path.exists(f"database/{DB_NAME}"):
         db.create_all()
-        db.session.add_all(outbound_flights)
+        db.session.add_all(flights)
         db.session.commit()
         print("Created SQLite database!")
     else:
         print("SQLite database exists!")
 
-    # print(Flight.query.all())
+    print(Flight.query.count())
 
 if __name__ == '__main__':
     app.run()
