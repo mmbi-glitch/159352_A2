@@ -1,0 +1,10 @@
+# views defines all the main website routes
+# and the views they reference
+
+from flask import Blueprint, render_template, request, flash, jsonify
+
+views = Blueprint("views", __name__)
+
+@views.route("/")
+def home():
+    return render_template("home.html")
