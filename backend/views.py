@@ -40,6 +40,7 @@ def flights_search():
                                              Flight.dest_code.startswith(origin_code)).all()
             # print(flights_out)
             # print(flights_in)
+            # TODO: problematic - this should ideally be a redirect
             return flights_found(out_flights=flights_out, in_flights=flights_in)
     return render_template("flights_search.html")
 
@@ -65,28 +66,55 @@ def flights_book():
             outbound_flight = Flight.query.filter_by(id=outbound_flight_id).first()
             inbound_flight = Flight.query.filter_by(id=inbound_flight_id).first()
 
-            booking_ref = chr(random.randint(65, 90)) + chr(random.randint(65, 90)) + chr(
+            # function to get a random booking ref
+            def random_booking_ref():
+                return chr(random.randint(65, 90)) + chr(random.randint(65, 90)) + chr(
                     random.randint(65, 90)) + str(
                     random.randint(0, 9)) + str(random.randint(0, 9)) + chr(random.randint(65, 90))
 
-            while Booking.query.filter_by(booking_ref=booking_ref).all():
-                booking_ref = chr(random.randint(65, 90)) + chr(random.randint(65, 90)) + chr(
-                    random.randint(65, 90)) + str(
-                    random.randint(0, 9)) + str(random.randint(0, 9)) + chr(random.randint(65, 90))
+            # first, let's see we can find the customer first (email, mobile unique)
 
-            if not Customer.query.filter_by(email=email, mobile=mobile).all():
-                new_booking = Booking(booking_ref, outbound_flight_id, inbound_flight_id, outbound_flight,
-                                      inbound_flight)
-                db.session.add(new_booking)
+            customer = Customer.query.filter_by(email=email, mobile=mobile).first()
+            if customer:
+                # found the customer, now let's see if they have a booking
+                if Booking.query.filter_by(booking_ref=customer.booking_ref).first():
+                    flash("You already have an existing booking.", category="error")
+                    flash("Want to change? Cancel the existing booking first.", category="info")
+                # customer is there, but no booking, create one
+                else:
+                    # get a new booking reference
+                    booking_ref = random_booking_ref()
+
+                    while Booking.query.filter_by(booking_ref=booking_ref).all():
+                        booking_ref = random_booking_ref()
+
+                    new_booking = Booking(booking_ref, outbound_flight_id, inbound_flight_id,
+                                          outbound_flight,
+                                          inbound_flight)
+
+                    db.session.add(new_booking)
+                    customer.booking_ref = booking_ref
+                    customer.booking = new_booking
+                    db.session.commit()
+                    flash("Booking confirmed: " + booking_ref + ". Thanks for booking with us!", category="success")
+                    flash("To view/manage booking, go to Manage Booking", category="info")
+
+            # create a new booking and customer
+            else:
+
+                # get a new booking reference
+                booking_ref = random_booking_ref()
+
+                while Booking.query.filter_by(booking_ref=booking_ref).all():
+                    booking_ref = random_booking_ref()
+
+                new_booking = Booking(booking_ref, outbound_flight_id, inbound_flight_id, outbound_flight, inbound_flight)
                 new_customer = Customer(title, f_name, l_name, email, mobile, booking_ref, new_booking)
                 db.session.add(new_customer)
+                db.session.add(new_booking)
                 db.session.commit()
                 flash("Booking confirmed: " + booking_ref + ". Thanks for booking with us!", category="success")
                 flash("To view/manage booking, go to Manage Booking", category="info")
-
-            else:
-                flash("You already have an existing booking.", category="error")
-                flash("Want to change? Cancel the existing booking first.", category="info")
 
             print(Booking.query.all())
             print(Customer.query.all())
@@ -133,12 +161,16 @@ def manage():
                     if check_password_hash(customer.booking_ref, booking_ref):
                         flash("Successfully logged in!", category="success")
                         login_user(customer, remember=True)
-                        return redirect(url_for("views.booking"))
+                        return redirect(url_for("views.manage_booking"))
                 flash("Incorrect booking reference. Please try again.", category="error")
             else:
                 flash("This last name does not exist.", category="error")
     return render_template("manage.html")
 
+
+@views.route("/manage/booking")
+def manage_booking():
+    return render_template("manage_booking.html")
 
 @views.route("/about_us")
 def about_us():
