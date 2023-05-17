@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Notes
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h1>Book a Flight</h1>
+        <p>Book a flight with FernAir for more choice, flexibility and the best short-hop journeys.
+            Find our best-value fares to destinations both in New Zealand and Australia.
+            Enjoy a unique, mesmerizing flight above rural Aotearoa.</p>
+        <p>Note: If you aren't sure which dates to choose, it would be worth checking the flights schedule.</p>
+        <div class="container-md">
+            <form class="form" method="post">
+                <div class="row g-3 align-items-center">
+                    <div class="form-group col-auto">
+                        <label for="origin" class="col-form-label">Flying from</label>
+                        <select class="form-select" id="origin" name="origin">
+                            <option selected disabled>From</option>
+                            <option value="YMHB">Hobart, Tasmania (YMHB)</option>
+                            <option value="NZNE">Dairy Flat, North Shore (NZNE)</option>
+                            <option value="NZRO">Rotorua, Bay of Plenty (NZRO)</option>
+                            <option value="NZGB">Claris, Great Barrier Island (NZGB)</option>
+                            <option value="NZCI">Tuuta, Chatham Islands (NZCI)</option>
+                            <option value="NZTL">Lake Tekapo, Canterbury (NZTL)</option>
+                        </select>
+
+                    </div>
+                    <div class="form-group col-auto">
+                        <label for="dest" class="col-form-label">Flying to</label>
+                        <select class="form-select" id="origin" name="dest">
+                            <option selected disabled>To</option>
+                            <option value="YMHB">Hobart, Tasmania (YMHB)</option>
+                            <option value="NZNE">Dairy Flat, North Shore (NZNE)</option>
+                            <option value="NZRO">Rotorua, Bay of Plenty (NZRO)</option>
+                            <option value="NZGB">Claris, Great Barrier Island (NZGB)</option>
+                            <option value="NZCI">Tuuta, Chatham Islands (NZCI)</option>
+                            <option value="NZTL">Lake Tekapo, Canterbury (NZTL)</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="row g-3 align-items-center">
+                    <div class="form-group col-auto">
+                        <label for="leave_dt" class="col-form-label">Leave</label>
+                        <input type="date" id="leave_dt" name="leave_dt" class="form-control" required="required">
+                    </div>
+                    <div class="form-group col-auto">
+                        <label for="return_dt" class="col-form-label">Return</label>
+                        <input type="date" id="return_dt" name="return_dt" class="form-control" required="required">
+                    </div>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-success">Search flights</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

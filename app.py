@@ -6,7 +6,7 @@ from backend.views import views
 from database import db, DB_NAME
 from database.models import Flight, flights
 
-app = Flask(__name__, template_folder="frontend/templates")
+app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
 # secret key
 app.config["SECRET_KEY"] = "c983hdjkos93yfh287chj32947gsjcyf"
 # where database will be created
@@ -28,7 +28,7 @@ with app.app_context():
     else:
         print("SQLite database exists!")
 
-    print(Flight.query.count())
+    # print(Flight.query.all())
 
 if __name__ == '__main__':
     app.run()
