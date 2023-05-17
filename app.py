@@ -2,9 +2,14 @@ from os import path
 
 from flask import Flask
 
+from flask_login import LoginManager
+
 from backend.views import views
 from database import db, DB_NAME
-from database.models import Flight, flights
+from database.models import Customer, flights
+
+login_manager = LoginManager()
+login_manager.login_view = "views.manage"
 
 app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
 # secret key
@@ -27,6 +32,14 @@ with app.app_context():
         print("Created SQLite database!")
     else:
         print("SQLite database exists!")
+
+    login_manager.init_app(app)
+
+
+    # tells flask how to load a user
+    @login_manager.user_loader
+    def load_user(user_id):
+        return Customer.query.get(int(user_id))
 
     # print(Flight.query.all())
 

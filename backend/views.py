@@ -3,9 +3,8 @@
 
 import json, random
 from database import db
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_user
-from werkzeug.security import check_password_hash
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from flask_login import login_user, logout_user, login_required, current_user
 
 from database.models import Flight, Customer, Temp, Booking
 
@@ -97,7 +96,7 @@ def flights_book():
                     customer.booking = new_booking
                     db.session.commit()
                     flash("Booking confirmed: " + booking_ref + ". Thanks for booking with us!", category="success")
-                    flash("To view/manage booking, go to Manage Booking", category="info")
+                    flash("To access your booking, login via the Manage page", category="info")
 
             # create a new booking and customer
             else:
@@ -114,7 +113,7 @@ def flights_book():
                 db.session.add(new_booking)
                 db.session.commit()
                 flash("Booking confirmed: " + booking_ref + ". Thanks for booking with us!", category="success")
-                flash("To view/manage booking, go to Manage Booking", category="info")
+                flash("To access your booking, login via the Manage page", category="info")
 
             print(Booking.query.all())
             print(Customer.query.all())
@@ -158,7 +157,7 @@ def manage():
             print(customers)
             if customers:
                 for customer in customers:
-                    if check_password_hash(customer.booking_ref, booking_ref):
+                    if customer.booking_ref == booking_ref:
                         flash("Successfully logged in!", category="success")
                         login_user(customer, remember=True)
                         return redirect(url_for("views.manage_booking"))
@@ -169,8 +168,30 @@ def manage():
 
 
 @views.route("/manage/booking")
+@login_required
 def manage_booking():
-    return render_template("manage_booking.html")
+    return render_template("manage_booking.html", user=current_user)
+
+@views.route("/cancel_booking", methods=["POST"])
+@login_required
+def cancel_booking():
+    booking = json.loads(request.data)
+    booking_id = booking["bookingId"]
+    booking_to_cancel = Booking.query.get(booking_id)
+    if booking_to_cancel:
+        if current_user.booking_ref == booking_to_cancel.booking_ref:
+            db.session.delete(booking_to_cancel)
+            current_user.booking = None
+            db.session.commit()
+            flash(f"Booking {booking_id} canceled!", category="error")
+    return jsonify({})
+
+
+@views.route("/exit")
+@login_required
+def exit_booking():
+    logout_user()
+    return redirect(url_for("views.manage"))
 
 @views.route("/about_us")
 def about_us():

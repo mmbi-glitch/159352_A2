@@ -37,3 +37,10 @@ function bookFlights(outbound_flights, inbound_flights) {
         }
     }
 }
+
+function cancelBooking(bookingId) {
+    fetch('/cancel_booking', {
+        method: "POST",
+        body: JSON.stringify({bookingId: bookingId})
+    }).then(() => window.location.reload())
+}
