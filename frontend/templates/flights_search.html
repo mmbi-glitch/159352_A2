@@ -6,13 +6,14 @@
 
 {% block content %}
     <div class="container-fluid">
+        <br>
         <h1>Book a Flight</h1>
         <p>Book a flight with FernAir for more choice, flexibility and the best short-hop journeys.
             Find our best-value fares to destinations both in New Zealand and Australia.
             Enjoy a unique, mesmerizing flight above rural Aotearoa.</p>
         <p>Note: If you aren't sure which dates to choose, it would be worth checking the flights schedule.</p>
         <div class="container-md">
-            <form class="form" method="post">
+            <form class="form" action="/flights/found" method="post">
                 <div class="row g-3 align-items-center">
                     <div class="form-group col-auto">
                         <label for="origin" class="col-form-label">Flying from</label>
@@ -29,7 +30,7 @@
                     </div>
                     <div class="form-group col-auto">
                         <label for="dest" class="col-form-label">Flying to</label>
-                        <select class="form-select" id="origin" name="dest">
+                        <select class="form-select" id="dest" name="dest">
                             <option selected disabled>To</option>
                             <option value="YMHB">Hobart, Tasmania (YMHB)</option>
                             <option value="NZNE">Dairy Flat, North Shore (NZNE)</option>
@@ -43,12 +44,19 @@
                 </div>
                 <div class="row g-3 align-items-center">
                     <div class="form-group col-auto">
+                        <label for="trip_type" class="col-form-label">Trip type</label>
+                        <select class="form-select" id="trip_type" name="trip_type" onchange="hideReturnDate(document.getElementById('return_dt_group'), this)">
+                            <option value="OneWay">One Way</option>
+                            <option value="Return">Return</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-auto">
                         <label for="leave_dt" class="col-form-label">Leave</label>
                         <input type="date" id="leave_dt" name="leave_dt" class="form-control" required="required">
                     </div>
-                    <div class="form-group col-auto">
+                    <div class="form-group col-auto" id="return_dt_group" style="display: none;">
                         <label for="return_dt" class="col-form-label">Return</label>
-                        <input type="date" id="return_dt" name="return_dt" class="form-control" required="required">
+                        <input type="date" id="return_dt" name="return_dt" class="form-control">
                     </div>
                 </div>
                 <br>

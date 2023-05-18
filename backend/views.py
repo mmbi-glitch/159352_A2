@@ -18,12 +18,18 @@ def home():
 
 @views.route("/flights/search", methods=["GET", "POST"])
 def flights_search():
+    return render_template("flights_search.html")
+
+
+@views.route("/flights/found", methods=["GET", "POST"])
+def flights_found():
     if request.method == "POST":
         # get post data
         origin_code = request.form.get("origin")
         dest_code = request.form.get("dest")
         outbound_dt = request.form.get("leave_dt")
         inbound_dt = request.form.get("return_dt")
+        trip_type = request.form.get("trip_type")
         # print(origin_code, dest_code, outbound_dt, inbound_dt)
         # perform preliminary checks
         if origin_code == dest_code:
@@ -37,17 +43,14 @@ def flights_search():
             flights_in = Flight.query.filter(Flight.leave_dt.startswith(inbound_dt),
                                              Flight.origin_code.startswith(dest_code),
                                              Flight.dest_code.startswith(origin_code)).all()
-            # print(flights_out)
-            # print(flights_in)
-            # TODO: problematic - this should ideally be a redirect
-            return flights_found(out_flights=flights_out, in_flights=flights_in)
-    return render_template("flights_search.html")
-
-
-@views.route("/flights/found", methods=["GET", "POST"])
-def flights_found(out_flights=None, in_flights=None):
+            print("FLIGHTS_OUT:", flights_out)
+            print("FLIGHTS_IN:", flights_in)
+            if trip_type == "OneWay":
+                return render_template("flights_found.html", outbound_flights=flights_out, round_trip=False)
+            return render_template("flights_found.html", outbound_flights=flights_out, inbound_flights=flights_in,
+                                   round_trip=True)
     # now, we need display found flights
-    return render_template("flights_found.html", outbound_flights=out_flights, inbound_flights=in_flights)
+    return render_template("flights_found.html")
 
 
 @views.route("/flights/book", methods=["GET", "POST"])
@@ -60,10 +63,15 @@ def flights_book():
             l_name = request.form.get("last_name")
             email = request.form.get("email")
             mobile = request.form.get("mobile")
+
+            inbound_flight_id = ""
+            inbound_flight = Flight()
             outbound_flight_id = Temp.query.all()[0].flight_id
-            inbound_flight_id = Temp.query.all()[1].flight_id
+            if Temp.query.count() == 2:
+                inbound_flight_id = Temp.query.all()[1].flight_id
             outbound_flight = Flight.query.filter_by(id=outbound_flight_id).first()
-            inbound_flight = Flight.query.filter_by(id=inbound_flight_id).first()
+            if Temp.query.count() == 2:
+                inbound_flight = Flight.query.filter_by(id=inbound_flight_id).first()
 
             # function to get a random booking ref
             def random_booking_ref():
@@ -86,10 +94,13 @@ def flights_book():
 
                     while Booking.query.filter_by(booking_ref=booking_ref).all():
                         booking_ref = random_booking_ref()
-
-                    new_booking = Booking(booking_ref, outbound_flight_id, inbound_flight_id,
-                                          outbound_flight,
-                                          inbound_flight)
+                    # differentiate
+                    if Temp.query.count() == 2:
+                        new_booking = Booking(booking_ref, outbound_flight_id,
+                                                           outbound_flight, inbound_flight_id,
+                                                           inbound_flight)
+                    else:
+                        new_booking = Booking(booking_ref, outbound_flight_id, outbound_flight)
 
                     db.session.add(new_booking)
                     customer.booking_ref = booking_ref
@@ -107,10 +118,17 @@ def flights_book():
                 while Booking.query.filter_by(booking_ref=booking_ref).all():
                     booking_ref = random_booking_ref()
 
-                new_booking = Booking(booking_ref, outbound_flight_id, inbound_flight_id, outbound_flight, inbound_flight)
+                # differentiate
+                if Temp.query.count() == 2:
+                    new_booking = Booking(booking_ref, outbound_flight_id,
+                                          outbound_flight, inbound_flight_id,
+                                          inbound_flight)
+                else:
+                    new_booking = Booking(booking_ref, outbound_flight_id, outbound_flight)
+
                 new_customer = Customer(title, f_name, l_name, email, mobile, booking_ref, new_booking)
-                db.session.add(new_customer)
                 db.session.add(new_booking)
+                db.session.add(new_customer)
                 db.session.commit()
                 flash("Booking confirmed: " + booking_ref + ". Thanks for booking with us!", category="success")
                 flash("To access your booking, login via the Manage page", category="info")
@@ -120,24 +138,37 @@ def flights_book():
 
             print("NOT EMPTY:", request.form)
 
-        # ok so we're saving the latest flights selection in this temporary database
-        else:
-            db.session.query(Temp).delete()
+    return render_template("make_booking.html")
+
+
+@views.route("/select_flights", methods=["GET", "POST"])
+def flights_select():
+    # ok so we're saving the latest flights selection in this temporary database
+    selected_flights = json.loads(request.data)
+    print("JSON_DATA: ", selected_flights)
+    # if there is no data, then one or more flights not selected correctly
+    if not selected_flights:
+        flash("No outbound and/or inbound flights selected!", category="error")
+        return jsonify({})
+    else:
+        # delete entries in temp table
+        db.session.query(Temp).delete()
+        db.session.commit()
+        round_trip = selected_flights['roundTrip']
+        if not round_trip:
+            outbound_flight_id = selected_flights['outFlightId']
+            db.session.add(Temp(outbound_flight_id))
             db.session.commit()
-            selected_flights = json.loads(request.data)
+            print("Round Trip")
+        else:
             outbound_flight_id = selected_flights['outFlightId']
             inbound_flight_id = selected_flights['inFlightId']
             db.session.add(Temp(outbound_flight_id))
             db.session.add(Temp(inbound_flight_id))
             db.session.commit()
-            print("EMPTY", request.form)
-
-    return render_template("make_booking.html")
-
-
-@views.route("/select_flights", methods=["GET", "POST"])
-def make_booking():
-    return redirect(url_for("views.flights_book"), code=307)
+            print("One-Way Trip")
+        print(Temp.query.all())
+        return redirect(url_for("views.flights_book"))
 
 
 @views.route("/manage", methods=["GET", "POST"])
@@ -172,6 +203,7 @@ def manage():
 def manage_booking():
     return render_template("manage_booking.html", user=current_user)
 
+
 @views.route("/cancel_booking", methods=["POST"])
 @login_required
 def cancel_booking():
@@ -192,6 +224,7 @@ def cancel_booking():
 def exit_booking():
     logout_user()
     return redirect(url_for("views.manage"))
+
 
 @views.route("/about_us")
 def about_us():

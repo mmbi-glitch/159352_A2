@@ -7,10 +7,8 @@
 {% block content %}
     <div class="container-fluid">
         <h1>Flights Found</h1>
-        <p>We found {{ outbound_flights|length }} outbound flights and {{ inbound_flights|length }} inbound
-            flights. </p>
-
         <h2>Choose your outbound flight</h2>
+        <p>We found {{ outbound_flights|length }} outbound flight(s). </p>
         <ul class="list-group" id="outbound_flights">
             {% for out_flight in outbound_flights %}
                 <li class="list-group-item list-group-item-action"
@@ -36,33 +34,45 @@
         </ul>
         <hr>
         <hr>
-        <h3>Choose your inbound flight</h3>
-        <ul class="list-group list-group-flush" id="inbound_flights">
-            {% for in_flight in inbound_flights %}
-                <li class="list-group-item list-group-item-action"
-                    onclick="selectFlight(this, document.getElementById('inbound_flights'))">
-                    <div class="card">
-                        <div class="card-header bg-warning">
-                            Only {{ in_flight.seats }} seats available!
+        {% if round_trip %}
+            <h3>Choose your inbound flight</h3>
+            <p>We found {{ inbound_flights|length }} inbound flight(s). </p>
+            <ul class="list-group list-group-flush" id="inbound_flights">
+                {% for in_flight in inbound_flights %}
+                    <li class="list-group-item list-group-item-action"
+                        onclick="selectFlight(this, document.getElementById('inbound_flights'))">
+                        <div class="card">
+                            <div class="card-header bg-warning">
+                                Only {{ in_flight.seats }} seats available!
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">Flight {{ in_flight.id }}</h4>
+                                <p class="card-text">{{ in_flight.origin }} ({{ in_flight.origin_code }})
+                                    to {{ in_flight.dest }} ({{ in_flight.dest_code }})</p>
+                                <p class="card-text">Departure: {{ in_flight.leave_dt }}</p>
+                                <p class="card-text">Arrival: {{ in_flight.arrival_dt }}</p>
+                                {% if in_flight.stopover %}
+                                    <p class="card-text">Transit: {{ in_flight.stopover }}</p>
+                                {% endif %}
+                                <p class="card-text">Price: NZD ${{ in_flight.price }}</p>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <h4 class="card-title">Flight {{ in_flight.id }}</h4>
-                            <p class="card-text">{{ in_flight.origin }} ({{ in_flight.origin_code }})
-                                to {{ in_flight.dest }} ({{ in_flight.dest_code }})</p>
-                            <p class="card-text">Departure: {{ in_flight.leave_dt }}</p>
-                            <p class="card-text">Arrival: {{ in_flight.arrival_dt }}</p>
-                            {% if in_flight.stopover %}
-                                <p class="card-text">Transit: {{ in_flight.stopover }}</p>
-                            {% endif %}
-                            <p class="card-text">Price: NZD ${{ in_flight.price }}</p>
-                        </div>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <br>
+        <a href="/flights/search">
+            <button type="button" class="btn btn-primary">Search Again</button>
+        </a>
         <button type="button" class="btn btn-primary"
-                onclick="bookFlights(document.getElementById('outbound_flights'),document.getElementById('inbound_flights'))">
-            Book Flights
+                onclick="
+                        {% if round_trip == True %}
+                            bookFlights(document.getElementById('outbound_flights'),document.getElementById('inbound_flights'), true)
+                        {% else %}
+                            bookFlights(document.getElementById('outbound_flights'),document.getElementById('inbound_flights'), false)
+                        {% endif %}">
+            Select Flights
         </button>
     </div>
 

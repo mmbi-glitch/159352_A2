@@ -1,7 +1,9 @@
 import pendulum as pdl
+import sqlalchemy
 
 from . import db
 from flask_login import UserMixin
+from sqlalchemy import sql
 
 
 # ----------- models --------------- #
@@ -36,8 +38,8 @@ class Flight(db.Model):
     aircraft_model = db.Column(db.String(20))
     stopover = db.Column(db.String(20))
 
-    def __init__(self, flight_id, seats, price, origin_code, dest_code, leave_dt, arrival_dt,
-                 stopover, aircraft_model):
+    def __init__(self, flight_id=None, seats=None, price=None, origin_code=None, dest_code=None, leave_dt=None, arrival_dt=None,
+                 stopover=None, aircraft_model=None):
         self.id = flight_id
         self.seats = seats
         self.price = price
@@ -53,12 +55,14 @@ class Flight(db.Model):
     def __repr__(self):
         return f"Flight('ID:{self.id}', 'ORG:{self.origin}', 'DEST:{self.dest}', OUT_DT:'{self.leave_dt}', 'IN_DT:{self.arrival_dt}')"
 
+
 class Temp(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     flight_id = db.Column(db.String(20), db.ForeignKey("flight.id"))
 
     def __init__(self, flight_id):
         self.flight_id = flight_id
+
 
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -68,7 +72,9 @@ class Booking(db.Model):
     outbound_flight = db.relationship("Flight", foreign_keys=[inbound_flight_id])
     inbound_flight = db.relationship("Flight", foreign_keys=[outbound_flight_id])
 
-    def __init__(self, booking_ref, outbound_flight_id, inbound_flight_id, outbound_flight, inbound_flight):
+    def __init__(self, booking_ref=None, outbound_flight_id=None, outbound_flight=None,
+                 inbound_flight_id=None, inbound_flight=None):
+        print(booking_ref, outbound_flight_id, inbound_flight_id, outbound_flight, inbound_flight)
         self.booking_ref = booking_ref
         self.outbound_flight_id = outbound_flight_id
         self.inbound_flight_id = inbound_flight_id
@@ -76,7 +82,7 @@ class Booking(db.Model):
         self.inbound_flight = inbound_flight
 
     def __repr__(self):
-        return f"Booking('{self.booking_ref}')"
+        return f"Booking('{self.booking_ref}', '{self.outbound_flight_id}', '{self.inbound_flight_id}')"
 
 
 class Customer(db.Model, UserMixin):
@@ -130,8 +136,9 @@ for date in outbound_dates:
     # print(date)
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=8, minute=30, tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(hours=3, minutes=50)).in_tz("Australia/Hobart")
-    outbound_flights.append(Flight("NH" + str(outbound_count), 5, 320, "NZNE", "YMHB", outbound_dt, inbound_dt, "NZRO", "SyberJet SJ30i"))
-    outbound_count+=1
+    outbound_flights.append(
+        Flight("NH" + str(outbound_count), 5, 320, "NZNE", "YMHB", outbound_dt, inbound_dt, "NZRO", "SyberJet SJ30i"))
+    outbound_count += 1
 
 # 2nd service - 1st cirrus plane
 
@@ -145,10 +152,12 @@ for date in outbound_dates:
     outbound_dt_2 = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=17, minute=15,
                                  tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(minutes=45))
-    outbound_flights.append(Flight("NR" + str(outbound_count), 4, 70, "NZNE", "NZRO", outbound_dt, inbound_dt, "", "Cirrus SF50"))
+    outbound_flights.append(
+        Flight("NR" + str(outbound_count), 4, 70, "NZNE", "NZRO", outbound_dt, inbound_dt, "", "Cirrus SF50"))
     outbound_count += 1
     inbound_dt = (outbound_dt_2.add(minutes=45))
-    outbound_flights.append(Flight("NR" + str(outbound_count), 4, 70, "NZNE", "NZRO", outbound_dt_2, inbound_dt, "", "Cirrus SF50"))
+    outbound_flights.append(
+        Flight("NR" + str(outbound_count), 4, 70, "NZNE", "NZRO", outbound_dt_2, inbound_dt, "", "Cirrus SF50"))
     outbound_count += 1
 
 # 3rd service - 2nd cirrus plane
@@ -162,7 +171,8 @@ for date in outbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=10, minute=45,
                                tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(minutes=20))
-    outbound_flights.append(Flight("NG" + str(outbound_count), 4, 70, "NZNE", "NZGB", outbound_dt, inbound_dt, "", "Cirrus SF50"))
+    outbound_flights.append(
+        Flight("NG" + str(outbound_count), 4, 70, "NZNE", "NZGB", outbound_dt, inbound_dt, "", "Cirrus SF50"))
     outbound_count += 1
 
 # 4th service - 1st honda jet
@@ -176,7 +186,8 @@ for date in outbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=14, minute=15,
                                tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(hours=2, minutes=15))
-    outbound_flights.append(Flight("NC" + str(outbound_count), 5, 360, "NZNE", "NZCI", outbound_dt, inbound_dt, "", "HondaJet Elite"))
+    outbound_flights.append(
+        Flight("NC" + str(outbound_count), 5, 360, "NZNE", "NZCI", outbound_dt, inbound_dt, "", "HondaJet Elite"))
     outbound_count += 1
 
 # 5th service - 2nd honda jet
@@ -189,7 +200,8 @@ for date in outbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=16, minute=35,
                                tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(hours=3, minutes=10))
-    outbound_flights.append(Flight("NT" + str(outbound_count), 5, 120, "NZNE", "NZTL", outbound_dt, inbound_dt, "", "HondaJet Elite"))
+    outbound_flights.append(
+        Flight("NT" + str(outbound_count), 5, 120, "NZNE", "NZTL", outbound_dt, inbound_dt, "", "HondaJet Elite"))
     outbound_count += 1
 
 print("outbound:", len(outbound_flights), outbound_count)
@@ -209,7 +221,8 @@ for date in inbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=14, minute=15,
                                tz="Australia/Hobart")
     inbound_dt = (outbound_dt.add(hours=3, minutes=50)).in_tz("Pacific/Auckland")
-    inbound_flights.append(Flight("HN" + str(inbound_count), 5, 320, "YMHB", "NZNE", outbound_dt, inbound_dt, "", "SyberJet SJ30i"))
+    inbound_flights.append(
+        Flight("HN" + str(inbound_count), 5, 320, "YMHB", "NZNE", outbound_dt, inbound_dt, "", "SyberJet SJ30i"))
     inbound_count += 1
 
 # 2nd service - 1st cirrus plane
@@ -224,10 +237,12 @@ for date in inbound_dates:
     outbound_dt_2 = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=20, minute=15,
                                  tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(minutes=45))
-    inbound_flights.append(Flight("RN" + str(inbound_count), 4, 70, "NZRO", "NZNE", outbound_dt, inbound_dt, "", "Cirrus SF50"))
+    inbound_flights.append(
+        Flight("RN" + str(inbound_count), 4, 70, "NZRO", "NZNE", outbound_dt, inbound_dt, "", "Cirrus SF50"))
     inbound_count += 1
     inbound_dt = (outbound_dt_2.add(minutes=45))
-    inbound_flights.append(Flight("RN" + str(inbound_count), 4, 70, "NZRO", "NZNE", outbound_dt_2, inbound_dt, "", "Cirrus SF50"))
+    inbound_flights.append(
+        Flight("RN" + str(inbound_count), 4, 70, "NZRO", "NZNE", outbound_dt_2, inbound_dt, "", "Cirrus SF50"))
     inbound_count += 1
 
 # 3rd service - 2nd cirrus plane
@@ -241,7 +256,8 @@ for date in inbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=10, minute=45,
                                tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(minutes=20))
-    inbound_flights.append(Flight("GN" + str(inbound_count), 4, 70, "NZGB", "NZNE", outbound_dt, inbound_dt, "", "Cirrus SF50"))
+    inbound_flights.append(
+        Flight("GN" + str(inbound_count), 4, 70, "NZGB", "NZNE", outbound_dt, inbound_dt, "", "Cirrus SF50"))
     inbound_count += 1
 
 # 4th service - 1st honda jet
@@ -255,7 +271,8 @@ for date in inbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=10, minute=15,
                                tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(hours=2, minutes=15))
-    inbound_flights.append(Flight("CN" + str(inbound_count), 5, 360, "NZCI", "NZNE", outbound_dt, inbound_dt, "", "HondaJet Elite"))
+    inbound_flights.append(
+        Flight("CN" + str(inbound_count), 5, 360, "NZCI", "NZNE", outbound_dt, inbound_dt, "", "HondaJet Elite"))
     inbound_count += 1
 
 # 5th service - 2nd honda jet
@@ -268,7 +285,8 @@ for date in outbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=17, minute=25,
                                tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(hours=3, minutes=10))
-    inbound_flights.append(Flight("TN" + str(inbound_count), 5, 320, "NZTL", "NZNE", outbound_dt, inbound_dt, "", "HondaJet Elite"))
+    inbound_flights.append(
+        Flight("TN" + str(inbound_count), 5, 320, "NZTL", "NZNE", outbound_dt, inbound_dt, "", "HondaJet Elite"))
     inbound_count += 1
 
 print("inbound:", len(inbound_flights), inbound_count)
