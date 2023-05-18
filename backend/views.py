@@ -119,29 +119,37 @@ def flights_book():
             # create a new booking and customer
             else:
 
-                # get a new booking reference
-                booking_ref = random_booking_ref()
+                # customer email, mobile must be unique
 
-                while Booking.query.filter_by(booking_ref=booking_ref).all():
+                if Customer.query.filter_by(email=email).first():
+                    flash("This email already exists.", category="error")
+                elif Customer.query.filter_by(mobile=mobile).first():
+                    flash("This mobile number already exists.", category="error")
+                else:
+
+                    # get a new booking reference
                     booking_ref = random_booking_ref()
 
-                # differentiate
-                if Temp.query.count() == 2:
-                    new_booking = Booking(booking_ref, outbound_flight_id,
-                                          outbound_flight, inbound_flight_id,
-                                          inbound_flight)
-                    outbound_flight.seats -= 1
-                    inbound_flight.seats -= 1
-                else:
-                    new_booking = Booking(booking_ref, outbound_flight_id, outbound_flight)
-                    outbound_flight.seats -= 1
+                    while Booking.query.filter_by(booking_ref=booking_ref).all():
+                        booking_ref = random_booking_ref()
 
-                new_customer = Customer(title, f_name, l_name, email, mobile, booking_ref, new_booking)
-                db.session.add(new_booking)
-                db.session.add(new_customer)
-                db.session.commit()
-                flash("Booking confirmed: " + booking_ref + ". Thanks for booking with us!", category="success")
-                flash("To access your booking, login via the Manage page", category="info")
+                    # differentiate
+                    if Temp.query.count() == 2:
+                        new_booking = Booking(booking_ref, outbound_flight_id,
+                                              outbound_flight, inbound_flight_id,
+                                              inbound_flight)
+                        outbound_flight.seats -= 1
+                        inbound_flight.seats -= 1
+                    else:
+                        new_booking = Booking(booking_ref, outbound_flight_id, outbound_flight)
+                        outbound_flight.seats -= 1
+
+                    new_customer = Customer(title, f_name, l_name, email, mobile, booking_ref, new_booking)
+                    db.session.add(new_booking)
+                    db.session.add(new_customer)
+                    db.session.commit()
+                    flash("Booking confirmed: " + booking_ref + ". Thanks for booking with us!", category="success")
+                    flash("To access your booking, login via the Manage page", category="info")
 
             print(Booking.query.all())
             print(Customer.query.all())
@@ -186,15 +194,13 @@ def manage():
     if request.method == "POST":
         # get post data
         booking_ref = request.form.get("booking_ref")
-        last_name = request.form.get("last_name")
+        email = request.form.get("email_req")
         # preliminary checks
-        if len(last_name) < 2:
-            flash("Invalid last name. Please try again.", category="error")
-        elif len(booking_ref) != 6:
+        if len(booking_ref) != 6:
             flash("Booking reference is 6 characters long. Please try again.", category="error")
         else:
             # query customers table by last name
-            customers = Customer.query.filter_by(last_name=last_name).all()
+            customers = Customer.query.filter_by(email=email).all()
             print(customers)
             if customers:
                 for customer in customers:
@@ -204,7 +210,7 @@ def manage():
                         return redirect(url_for("views.manage_booking"))
                 flash("Incorrect booking reference. Please try again.", category="error")
             else:
-                flash("This last name does not exist.", category="error")
+                flash("This email does not exist.", category="error")
     return render_template("manage.html", user=current_user)
 
 

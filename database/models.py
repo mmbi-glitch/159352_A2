@@ -136,7 +136,7 @@ for date in outbound_dates:
     outbound_dt = pdl.datetime(year=date.year, month=date.month, day=date.day, hour=8, minute=30, tz="Pacific/Auckland")
     inbound_dt = (outbound_dt.add(hours=3, minutes=50)).in_tz("Australia/Hobart")
     outbound_flights.append(
-        Flight("NH" + str(outbound_count), 5, 320, "NZNE", "YMHB", outbound_dt, inbound_dt, "NZRO", "SyberJet SJ30i"))
+        Flight("NH" + str(outbound_count), 6, 320, "NZNE", "YMHB", outbound_dt, inbound_dt, "NZRO", "SyberJet SJ30i"))
     outbound_count += 1
 
 # 2nd service - 1st cirrus plane
@@ -221,7 +221,7 @@ for date in inbound_dates:
                                tz="Australia/Hobart")
     inbound_dt = (outbound_dt.add(hours=3, minutes=50)).in_tz("Pacific/Auckland")
     inbound_flights.append(
-        Flight("HN" + str(inbound_count), 5, 320, "YMHB", "NZNE", outbound_dt, inbound_dt, "", "SyberJet SJ30i"))
+        Flight("HN" + str(inbound_count), 6, 320, "YMHB", "NZNE", outbound_dt, inbound_dt, "", "SyberJet SJ30i"))
     inbound_count += 1
 
 # 2nd service - 1st cirrus plane
