@@ -5,8 +5,10 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
+    <div class="container-md">
+        <br>
         <h1>Flights Found</h1>
+        <br>
         <h2>Choose your outbound flight</h2>
         <p>We found {{ outbound_flights|length }} outbound flight(s). </p>
         <ul class="list-group" id="outbound_flights">

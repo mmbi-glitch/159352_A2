@@ -13,16 +13,16 @@ views = Blueprint("views", __name__)
 
 @views.route("/")
 def home():
-    return render_template("home.html")
+    return render_template("home.html", user=current_user)
 
 
 @views.route("/flights")
 def flights_services():
-    return render_template("flights_services.html")
+    return render_template("flights_services.html", user=current_user)
 
 @views.route("/flights/search", methods=["GET", "POST"])
 def flights_search():
-    return render_template("flights_search.html")
+    return render_template("flights_search.html", user=current_user)
 
 
 @views.route("/flights/found", methods=["GET", "POST"])
@@ -50,11 +50,11 @@ def flights_found():
             print("FLIGHTS_OUT:", flights_out)
             print("FLIGHTS_IN:", flights_in)
             if trip_type == "OneWay":
-                return render_template("flights_found.html", outbound_flights=flights_out, round_trip=False)
+                return render_template("flights_found.html", outbound_flights=flights_out, round_trip=False, user=current_user)
             return render_template("flights_found.html", outbound_flights=flights_out, inbound_flights=flights_in,
-                                   round_trip=True)
+                                   round_trip=True, user=current_user)
     # now, we need display found flights
-    return render_template("flights_found.html")
+    return render_template("flights_found.html", user=current_user)
 
 
 @views.route("/flights/book", methods=["GET", "POST"])
@@ -142,7 +142,7 @@ def flights_book():
 
             print("NOT EMPTY:", request.form)
 
-    return render_template("make_booking.html")
+    return render_template("make_booking.html", user=current_user)
 
 
 @views.route("/select_flights", methods=["GET", "POST"])
@@ -199,7 +199,7 @@ def manage():
                 flash("Incorrect booking reference. Please try again.", category="error")
             else:
                 flash("This last name does not exist.", category="error")
-    return render_template("manage.html")
+    return render_template("manage.html", user=current_user)
 
 
 @views.route("/manage/booking")

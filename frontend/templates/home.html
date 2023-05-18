@@ -1,13 +1,23 @@
 {% extends "base.html" %}
 
+
+
 {% block title %}
     Home
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid" style="background-image: url(https://beigroup.nz/wp-content/uploads/2017/03/CHR1321-wide-scaled.jpg); background-size: cover;
-    background-position: center; height: 496px;">
-<h1 class="text-center">Exclusive Luxury Airlines <br> Operating from Dairy Flats</h1>
-</div>
+    <div class="container-fluid"
+         style="background-image: url({{ url_for('static', filename='dairy-flats.jpg') }}); background-size: cover;
+                 background-position: center; height: 496px;">
+        <h1 class="text-center"
+            style="
+            color: white;
+            text-shadow: 0 0 2px green, 0 0 2px green, 0 0 2px green, 0 0 2px green;
+            padding: 60px 0 0 0;
+            ">
+            Exclusive
+            Airlines <br> Operating from Dairy Flats</h1>
+    </div>
 
 {% endblock %}

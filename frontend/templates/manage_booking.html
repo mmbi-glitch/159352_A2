@@ -5,23 +5,33 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
+    <div class="container-md">
+        <br>
         <h1>Your Booking</h1>
+        <br>
         {% if user.booking %}
         <ul class="list-group list-group-flush" id="inbound_flights">
-            <li class="list-group-item list-group-item-action">
+            <li class="list-group-item">
                 <div class="card">
                     <div class="card-header bg-warning">
                         General Information
                     </div>
                     <div class="card-body">
                         <h4 class="card-title">Booking Ref. {{ user.booking_ref }}</h4>
-                        <p class="card-text">Type: Return</p>
+                        {% if user.booking.inbound_flight %}
+                        <p class="card-text">Type: Round-Trip</p>
                         <p class="card-text">Route: {{ user.booking.outbound_flight.origin }}
                             ({{ user.booking.outbound_flight.origin_code }})
                             to {{ user.booking.outbound_flight.dest }} ({{ user.booking.outbound_flight.dest_code }})
                             to {{ user.booking.outbound_flight.origin }}
                             ({{ user.booking.outbound_flight.origin_code }})</p>
+                            {% else %}
+                                                    <p class="card-text">Type: One-Way</p>
+                        <p class="card-text">Route: {{ user.booking.outbound_flight.origin }}
+                            ({{ user.booking.outbound_flight.origin_code }})
+                            to {{ user.booking.outbound_flight.dest }} ({{ user.booking.outbound_flight.dest_code }})
+                        </p>
+                            {% endif %}
                         {% if user.booking.inbound_flight %}
                             <p class="card-text">Total Price: NZD
                                 ${{ user.booking.outbound_flight.price + user.booking.inbound_flight.price }}</p>
@@ -33,7 +43,7 @@
                             </div>
                             </div>
                             </li>
-                            <li class="list-group-item list-group-item-action">
+                            <li class="list-group-item">
                                 <div class="card">
                                     <div class="card-header bg-warning">
                                         Passenger Information
@@ -45,7 +55,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item list-group-item-action">
+                            <li class="list-group-item">
                                 <div class="card">
                                     <div class="card-header bg-warning">
                                         Departure Flight
@@ -66,7 +76,7 @@
                                 </div>
                             </li>
                             {% if user.booking.inbound_flight %}
-                                <li class="list-group-item list-group-item-action">
+                                <li class="list-group-item">
                                     <div class="card">
                                         <div class="card-header bg-warning">
                                             Return Flight
@@ -97,7 +107,6 @@
                             </button>
                         {% else %}
                             <h3>Sorry, you have no existing booking.</h3>
-                            <p>Perhaps, you would like to make a new booking?</p>
                         {% endif %}
 
     </div>
