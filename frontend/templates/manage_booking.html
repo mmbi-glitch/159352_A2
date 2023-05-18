@@ -10,104 +10,111 @@
         <h1>Your Booking</h1>
         <br>
         {% if user.booking %}
-        <ul class="list-group list-group-flush" id="inbound_flights">
-            <li class="list-group-item">
-                <div class="card">
-                    <div class="card-header bg-warning">
-                        General Information
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Booking Ref. {{ user.booking_ref }}</h4>
-                        {% if user.booking.inbound_flight %}
-                        <p class="card-text">Type: Round-Trip</p>
-                        <p class="card-text">Route: {{ user.booking.outbound_flight.origin }}
-                            ({{ user.booking.outbound_flight.origin_code }})
-                            to {{ user.booking.outbound_flight.dest }} ({{ user.booking.outbound_flight.dest_code }})
-                            to {{ user.booking.outbound_flight.origin }}
-                            ({{ user.booking.outbound_flight.origin_code }})</p>
+            <ul class="list-group list-group-flush" id="inbound_flights">
+                <li class="list-group-item">
+                    <div class="card">
+                        <div class="card-header bg-warning">
+                            General Information
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title">Booking Ref. {{ user.booking_ref }}</h4>
+                            {% if user.booking.inbound_flight %}
+                                <p class="card-text">Type: Round-Trip</p>
+                                <p class="card-text">Route: {{ user.booking.outbound_flight.origin }}
+                                    ({{ user.booking.outbound_flight.origin_code }})
+                                    to {{ user.booking.outbound_flight.dest }}
+                                    ({{ user.booking.outbound_flight.dest_code }})
+                                    to {{ user.booking.outbound_flight.origin }}
+                                    ({{ user.booking.outbound_flight.origin_code }})</p>
                             {% else %}
-                                                    <p class="card-text">Type: One-Way</p>
-                        <p class="card-text">Route: {{ user.booking.outbound_flight.origin }}
-                            ({{ user.booking.outbound_flight.origin_code }})
-                            to {{ user.booking.outbound_flight.dest }} ({{ user.booking.outbound_flight.dest_code }})
-                        </p>
+                                <p class="card-text">Type: One-Way</p>
+                                <p class="card-text">Route: {{ user.booking.outbound_flight.origin }}
+                                    ({{ user.booking.outbound_flight.origin_code }})
+                                    to {{ user.booking.outbound_flight.dest }}
+                                    ({{ user.booking.outbound_flight.dest_code }})
+                                </p>
                             {% endif %}
-                        {% if user.booking.inbound_flight %}
-                            <p class="card-text">Total Price: NZD
-                                ${{ user.booking.outbound_flight.price + user.booking.inbound_flight.price }}</p>
-                                {% else %}
-                            <p class="card-text">Total Price: NZD
-                                ${{ user.booking.outbound_flight.price }}</p>
+                            {% if user.booking.inbound_flight %}
+                                <p class="card-text">Total Price: NZD
+                                    ${{ user.booking.outbound_flight.price + user.booking.inbound_flight.price }}</p>
+                            {% else %}
+                                <p class="card-text">Total Price: NZD
+                                    ${{ user.booking.outbound_flight.price }}</p>
                             {% endif %}
                             <p class="card-text">Payment Confirmation: Received</p>
-                            </div>
-                            </div>
-                            </li>
-                            <li class="list-group-item">
-                                <div class="card">
-                                    <div class="card-header bg-warning">
-                                        Passenger Information
-                                    </div>
-                                    <div class="card-body">
-                                        <h4 class="card-title">{{ user.title }} {{ user.first_name }} {{ user.last_name }}</h4>
-                                        <p class="card-text">Email Address: {{ user.email }}</p>
-                                        <p class="card-text">Mobile: {{ user.mobile }}</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item">
-                                <div class="card">
-                                    <div class="card-header bg-warning">
-                                        Departure Flight
-                                    </div>
-                                    <div class="card-body">
-                                        <h4 class="card-title">Flight {{ user.booking.outbound_flight.id }}</h4>
-                                        <p class="card-text">{{ user.booking.outbound_flight.origin }}
-                                            ({{ user.booking.outbound_flight.origin_code }})
-                                            to {{ user.booking.outbound_flight.dest }}
-                                            ({{ user.booking.outbound_flight.dest_code }})</p>
-                                        <p class="card-text">Departure: {{ user.booking.outbound_flight.leave_dt }}</p>
-                                        <p class="card-text">Arrival: {{ user.booking.outbound_flight.arrival_dt }}</p>
-                                        {% if user.booking.outbound_flight.stopover %}
-                                            <p class="card-text">
-                                                Transit: {{ user.booking.outbound_flight.stopover }}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </li>
-                            {% if user.booking.inbound_flight %}
-                                <li class="list-group-item">
-                                    <div class="card">
-                                        <div class="card-header bg-warning">
-                                            Return Flight
-                                        </div>
-                                        <div class="card-body">
-                                            <h4 class="card-title">Flight {{ user.booking.inbound_flight.id }}</h4>
-                                            <p class="card-text">{{ user.booking.inbound_flight.origin }}
-                                                ({{ user.booking.inbound_flight.origin_code }})
-                                                to {{ user.booking.inbound_flight.dest }}
-                                                ({{ user.booking.inbound_flight.dest_code }})</p>
-                                            <p class="card-text">
-                                                Departure: {{ user.booking.inbound_flight.leave_dt }}</p>
-                                            <p class="card-text">
-                                                Arrival: {{ user.booking.inbound_flight.arrival_dt }}</p>
-                                            {% if user.booking.inbound_flight.stopover %}
-                                                <p class="card-text">
-                                                    Transit: {{ user.booking.inbound_flight.stopover }}</p>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </li>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="card">
+                        <div class="card-header bg-warning">
+                            Passenger Information
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title">{{ user.title }} {{ user.first_name }} {{ user.last_name }}</h4>
+                            <p class="card-text">Email Address: {{ user.email }}</p>
+                            <p class="card-text">Mobile: {{ user.mobile }}</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="card">
+                        <div class="card-header bg-warning">
+                            Departure Flight
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title">Flight {{ user.booking.outbound_flight.id }}</h4>
+                            <p class="card-text">{{ user.booking.outbound_flight.origin }}
+                                ({{ user.booking.outbound_flight.origin_code }})
+                                to {{ user.booking.outbound_flight.dest }}
+                                ({{ user.booking.outbound_flight.dest_code }})</p>
+                            <p class="card-text">Departure: {{ user.booking.outbound_flight.leave_dt }}</p>
+                            <p class="card-text">Arrival: {{ user.booking.outbound_flight.arrival_dt }}</p>
+                            {% if user.booking.outbound_flight.stopover %}
+                                <p class="card-text">
+                                    Transit: {{ user.booking.outbound_flight.stopover }}</p>
                             {% endif %}
-                            </ul>
-                            <br>
-                            <button class="btn btn-danger text-center"
-                                    style="margin: 20px auto 40px auto; display: block"
-                                    onclick="cancelBooking({{ user.booking.id }})">Cancel Booking
-                            </button>
-                        {% else %}
-                            <h3>Sorry, you have no existing booking.</h3>
-                        {% endif %}
+                            <p class="card-text">Aircraft: {{ user.booking.outbound_flight.aircraft_model }}</p>
+                            <p class="card-text">Max Seats: {{ user.booking.outbound_flight.max_seats }}</p>
+
+                        </div>
+                    </div>
+                </li>
+                {% if user.booking.inbound_flight %}
+                    <li class="list-group-item">
+                        <div class="card">
+                            <div class="card-header bg-warning">
+                                Return Flight
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">Flight {{ user.booking.inbound_flight.id }}</h4>
+                                <p class="card-text">{{ user.booking.inbound_flight.origin }}
+                                    ({{ user.booking.inbound_flight.origin_code }})
+                                    to {{ user.booking.inbound_flight.dest }}
+                                    ({{ user.booking.inbound_flight.dest_code }})</p>
+                                <p class="card-text">
+                                    Departure: {{ user.booking.inbound_flight.leave_dt }}</p>
+                                <p class="card-text">
+                                    Arrival: {{ user.booking.inbound_flight.arrival_dt }}</p>
+                                {% if user.booking.inbound_flight.stopover %}
+                                    <p class="card-text">
+                                        Transit: {{ user.booking.inbound_flight.stopover }}</p>
+                                {% endif %}
+                                <p class="card-text">Aircraft: {{ user.booking.inbound_flight.aircraft_model }}</p>
+                                <p class="card-text">Max Seats: {{ user.booking.inbound_flight.max_seats }}</p>
+                            </div>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+            <br>
+            <button class="btn btn-danger text-center"
+                    style="margin: 20px auto 40px auto; display: block"
+                    onclick="cancelBooking({{ user.booking.id }})">Cancel Booking
+            </button>
+        {% else %}
+            <h3>Sorry, you have no existing booking.</h3>
+        {% endif %}
 
     </div>
 {% endblock %}

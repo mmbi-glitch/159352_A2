@@ -20,7 +20,9 @@
 <body>
 <nav class="navbar navbar-expand-md navbar-light bg-light" style="background-color: #023020;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">FernAir</a>
+
+        <a class="navbar-brand" href="/"><img src="{{ url_for("static", filename="fern-logo.svg") }}" width="30"
+                                              height="30" class="d-inline-block align-top" alt=""><b> FernAir</b></a>
         <!-- NOTE: now data attributes now namespaced with bs, e.g. data-toggle now data-bs-toggle -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
             <span class="navbar-toggler-icon"></span>
@@ -28,22 +30,22 @@
         <div class="collapse navbar-collapse" id="navbar">
             <div class="navbar-nav">
                 {% if user.is_authenticated %}
-                <a class="nav-item nav-link" id="manage" href="/manage/booking">
-                    <button class="btn btn-outline-success my-2 my-sm-0">View Booking</button>
-                </a>
-                <a class="nav-item nav-link" id="exit" href="/exit">
-                    <button class="btn btn-outline-success my-2 my-sm-0">Exit Booking</button>
-                </a>
+                    <a class="nav-item nav-link" id="manage" href="/manage/booking">
+                        <button class="btn btn-outline-success my-2 my-sm-0">View Booking</button>
+                    </a>
+                    <a class="nav-item nav-link" id="exit" href="/exit">
+                        <button class="btn btn-outline-success my-2 my-sm-0">Exit Booking</button>
+                    </a>
                 {% else %}
-                <a class="nav-item nav-link" id="flights_services" href="/flights">
-                    <button class="btn btn-outline-success my-2 my-sm-0">Our Services</button>
-                </a>
-                <a class="nav-item nav-link" id="flights_search" href="/flights/search">
-                    <button class="btn btn-outline-success my-2 my-sm-0">Book Flight</button>
-                </a>
-                <a class="nav-item nav-link" id="manage" href="/manage">
-                    <button class="btn btn-outline-success my-2 my-sm-0">Manage Booking</button>
-                </a>
+                    <a class="nav-item nav-link" id="flights_services" href="/flights">
+                        <button class="btn btn-outline-success my-2 my-sm-0">Our Services</button>
+                    </a>
+                    <a class="nav-item nav-link" id="flights_search" href="/flights/search">
+                        <button class="btn btn-outline-success my-2 my-sm-0">Book Flight</button>
+                    </a>
+                    <a class="nav-item nav-link" id="manage" href="/manage">
+                        <button class="btn btn-outline-success my-2 my-sm-0">Manage Booking</button>
+                    </a>
                 {% endif %}
             </div>
         </div>

@@ -103,8 +103,11 @@ def flights_book():
                         new_booking = Booking(booking_ref, outbound_flight_id,
                                                            outbound_flight, inbound_flight_id,
                                                            inbound_flight)
+                        outbound_flight.seats -= 1
+                        inbound_flight.seats -= 1
                     else:
                         new_booking = Booking(booking_ref, outbound_flight_id, outbound_flight)
+                        outbound_flight.seats -= 1
 
                     db.session.add(new_booking)
                     customer.booking_ref = booking_ref
@@ -127,8 +130,11 @@ def flights_book():
                     new_booking = Booking(booking_ref, outbound_flight_id,
                                           outbound_flight, inbound_flight_id,
                                           inbound_flight)
+                    outbound_flight.seats -= 1
+                    inbound_flight.seats -= 1
                 else:
                     new_booking = Booking(booking_ref, outbound_flight_id, outbound_flight)
+                    outbound_flight.seats -= 1
 
                 new_customer = Customer(title, f_name, l_name, email, mobile, booking_ref, new_booking)
                 db.session.add(new_booking)
@@ -216,10 +222,16 @@ def cancel_booking():
     booking_to_cancel = Booking.query.get(booking_id)
     if booking_to_cancel:
         if current_user.booking_ref == booking_to_cancel.booking_ref:
+            flash(f"Booking {booking_to_cancel.booking_ref} canceled!", category="error")
+            if booking_to_cancel.inbound_flight:
+                booking_to_cancel.outbound_flight.seats += 1
+                booking_to_cancel.inbound_flight.seats += 1
+            else:
+                booking_to_cancel.outbound_flight.seats += 1
             db.session.delete(booking_to_cancel)
             current_user.booking = None
             db.session.commit()
-            flash(f"Booking {booking_id} canceled!", category="error")
+
     return jsonify({})
 
 
