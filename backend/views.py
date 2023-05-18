@@ -16,6 +16,10 @@ def home():
     return render_template("home.html")
 
 
+@views.route("/flights")
+def flights_services():
+    return render_template("flights_services.html")
+
 @views.route("/flights/search", methods=["GET", "POST"])
 def flights_search():
     return render_template("flights_search.html")
@@ -224,13 +228,3 @@ def cancel_booking():
 def exit_booking():
     logout_user()
     return redirect(url_for("views.manage"))
-
-
-@views.route("/about_us")
-def about_us():
-    return render_template("about.html")
-
-
-@views.route("/help")
-def help_me():
-    return render_template("help.html")

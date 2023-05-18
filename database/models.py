@@ -1,12 +1,9 @@
 import pendulum as pdl
-import sqlalchemy
-
 from . import db
 from flask_login import UserMixin
-from sqlalchemy import sql
 
 
-# ----------- models --------------- #
+# ----------- models-related stuff --------------- #
 
 def icao_to_loc(code):
     match code:
@@ -27,6 +24,7 @@ def icao_to_loc(code):
 class Flight(db.Model):
     id = db.Column(db.String(20), primary_key=True)
     price = db.Column(db.Integer)
+    max_seats = db.Column(db.Integer)
     seats = db.Column(db.Integer)
     origin = db.Column(db.String(20))
     dest = db.Column(db.String(20))
@@ -38,10 +36,11 @@ class Flight(db.Model):
     aircraft_model = db.Column(db.String(20))
     stopover = db.Column(db.String(20))
 
-    def __init__(self, flight_id=None, seats=None, price=None, origin_code=None, dest_code=None, leave_dt=None, arrival_dt=None,
+    def __init__(self, flight_id=None, max_seats=None, price=None, origin_code=None, dest_code=None, leave_dt=None, arrival_dt=None,
                  stopover=None, aircraft_model=None):
         self.id = flight_id
-        self.seats = seats
+        self.max_seats = max_seats
+        self.seats = max_seats
         self.price = price
         self.origin_code = origin_code
         self.dest_code = dest_code
