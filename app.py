@@ -24,15 +24,10 @@ app.register_blueprint(views, url_prefix="/")
 
 with app.app_context():
     db.init_app(app=app)
-
-    if not path.exists(f"database/{DB_NAME}"):
-        db.create_all()
-        db.session.add_all(flights)
-        db.session.commit()
-        print("Created SQLite database!")
-    else:
-        print("SQLite database exists!")
-
+    db.create_all()
+    db.session.add_all(flights)
+    db.session.commit()
+    print("Created SQLite database!")
     login_manager.init_app(app)
 
 
