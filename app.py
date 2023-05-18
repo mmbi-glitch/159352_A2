@@ -24,6 +24,7 @@ app.register_blueprint(views, url_prefix="/")
 
 with app.app_context():
     db.init_app(app=app)
+    db.drop_all()
     db.create_all()
     db.session.add_all(flights)
     db.session.commit()

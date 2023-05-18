@@ -32,7 +32,7 @@ class Flight(db.Model):
     dest_code = db.Column(db.String(4))
     leave_dt = db.Column(db.TIMESTAMP(timezone=True))
     arrival_dt = db.Column(db.TIMESTAMP(timezone=True))
-    operator = db.Column(db.String(20), default="MilkRun Airways")
+    operator = db.Column(db.String(20), default="FernAir")
     aircraft_model = db.Column(db.String(20))
     stopover = db.Column(db.String(20))
 
