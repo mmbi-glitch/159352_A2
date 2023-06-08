@@ -37,4 +37,4 @@ LABEL authors="mmbil"
 # note: need to specify 0.0.0.0
 # as our host (0.0.0.0 = wildcard address; matches any host)
 
-CMD python -m flask run -h 0.0.0.0 -p 8000
+CMD python -m flask run -h 0.0.0.0 -p 8080
