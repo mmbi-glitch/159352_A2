@@ -32,10 +32,10 @@ requirements. Your application should...
 ### Screenshots
 
 - Home page
-[Home Page](home-page.png)
+![Home Page](home-page.png)
 - Booking page
-[Booking Page](book-page.png)
+![Booking Page](book-page.png)
 - Choose flights page
-[Choose flights](flight-page.png)
+![Choose flights](flight-page.png)
 - Sample booking
-[Sample booking](sample-booking.png)
+![Sample booking](sample-booking.png)
