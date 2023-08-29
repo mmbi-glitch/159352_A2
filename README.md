@@ -1,6 +1,6 @@
 ## Assignment 2 - 159352 (Flight Booking System)
 
-Full-stack website with extensive backend functions created using:
+Full-stackish website with extensive backend functions created using:
 - Bootstrap 5 for the frontend.
 - Flask (Python) as the web framework.
 - SQLite as the database engine.
